@@ -7,9 +7,8 @@ import yargs from 'yargs';
 import webpack from 'webpack';
 import {buildSizeTree, printSizeTree} from './SizeTree';
 
-const DIR = __dirname;
-const SCRIPT_PATH = path.resolve(DIR, __filename);
-const TMP_DIR = path.resolve(DIR, 'tmp');
+const SCRIPT_PATH = path.resolve(__dirname, __filename);
+const TMP_DIR = path.resolve(process.cwd(), '__tmp');
 const TMP_ENTRY_PATH = path.resolve(TMP_DIR, 'entry.js');
 const TMP_OUTPUT_PATH = path.resolve(TMP_DIR, 'output.js');
 const TMP_JSON_PATH = path.resolve(TMP_DIR, 'stat.json');
@@ -29,11 +28,16 @@ function printIt(webpackStatsJsonStr) {
 
 const provideTmpDir = (fnExec) => {
     fs.emptyDirSync(TMP_DIR);
-    const onFinally = () => fs.removeSync(TMP_DIR);
+    const onFinally = (err) => {
+        fs.removeSync(TMP_DIR);
+        if (err) {
+            console.log(err);
+        }
+    };
     try {
-        fnExec().then(onFinally, onFinally);
+        fnExec().then(() => onFinally(), onFinally);
     } catch (e) {
-        onFinally();
+        onFinally(e);
     }
 }
 
@@ -42,7 +46,10 @@ const printForJsonStr = (webpackStatJsonStr) => Promise.resolve(printSizeTree(bu
 const printForJsonFile = (statJsonFile) => printForJsonStr(fs.readFileSync(statJsonFile).toString());
 const buildWebpackStatJson = (entryFile) => new Promise((resolve, reject) => {
     webpack({
-        entry: path.resolve(entryFile)
+        entry: path.resolve(entryFile),
+        output: {
+            path: TMP_DIR
+        }
     }, (err, stats) => {
         const statJson = stats.toJson({
             modules: true
@@ -51,7 +58,10 @@ const buildWebpackStatJson = (entryFile) => new Promise((resolve, reject) => {
         err ? reject(err) : resolve(statJson);
     });
 });
-const createEntryForPackage = (packageName) => Promise.resolve(fs.writeFileSync(TMP_ENTRY_PATH, `require('${packageName}');`)).then(() => TMP_ENTRY_PATH);
+const createEntryForPackages = (packageNames) => Promise.resolve(fs.writeFileSync(
+    TMP_ENTRY_PATH,
+    packageNames.map(pkgName =>`require('${pkgName}');`).join('\n')
+)).then(() => TMP_ENTRY_PATH);
 
 const argv = yargs
     .option('stat-json', {
@@ -80,7 +90,7 @@ if (argv['stat-json']) {
     });
 } else if (argv['package']) {
     provideTmpDir(() => {
-        return createEntryForPackage(argv['package'])
+        return createEntryForPackages(argv['package'].split(','))
             .then(buildWebpackStatJson)
             .then(printForJson);
     });
