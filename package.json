@@ -1,14 +1,19 @@
 {
   "name": "package-size-analyzer",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "Package Size Analyzer when using npm packages",
+  "files": [
+    "src/",
+    "lib/"
+  ],
+  "bin": {
+    "package-size-analyzer": "./lib/cli.js"
+  },
   "scripts": {
-    "build": "babel cli.js SizeTree.js --out-dir build",
+    "build": "babel src/ --out-dir lib",
     "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "bin": "./build/cli.js",
   "author": "",
   "license": "MIT",
   "dependencies": {
