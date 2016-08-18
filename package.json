@@ -1,18 +1,17 @@
 {
   "name": "package-size-analyzer",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "Package Size Analyzer when using npm packages",
   "files": [
-    "src/",
-    "lib/"
+    "src",
+    "lib"
   ],
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "prepublish": "npm run build"
+  },
   "bin": {
     "package-size-analyzer": "./lib/cli.js"
-  },
-  "scripts": {
-    "build": "babel src/ --out-dir lib",
-    "prepublish": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "MIT",
