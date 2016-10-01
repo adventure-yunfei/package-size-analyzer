@@ -1,3 +1,4 @@
+import filesize from 'filesize';
 class SizeTree {
     constructor(key) {
         this.key = key;
@@ -59,8 +60,8 @@ export function buildSizeTree(webpackBundleStatJSON) {
 const log = (msg, tab = 0) => console.log(' '.repeat(tab) + msg);
 export function printSizeTree(sizeTree, tab = 0) {
     const {key, size, subSizeTreeMap} = sizeTree;
-    log(`${key}: ${size}`, tab);
-    log(`<self>: ${sizeTree.getSelfSize()}`, tab + 2);
+    log(`${key}: ${filesize(size)}`, tab);
+    log(`<self>: ${filesize(sizeTree.getSelfSize())}`, tab + 2);
     for (var subKey in subSizeTreeMap) {
         printSizeTree(subSizeTreeMap[subKey], tab + 2);
     }
