@@ -16,6 +16,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "filesize": "^3.3.0",
     "fs-extra": "^0.30.0",
     "webpack": "^1.13.1",
     "yargs": "^4.7.1"
