@@ -6,12 +6,12 @@ import child_process from 'child_process';
 import yargs from 'yargs';
 import webpack from 'webpack';
 import {buildSizeTree, printSizeTree} from './SizeTree';
+const jsonLoader = require.resolve('json-loader');
 
 const SCRIPT_PATH = path.resolve(__dirname, __filename);
 const TMP_DIR = path.resolve(process.cwd(), '__tmp');
 const TMP_ENTRY_PATH = path.resolve(TMP_DIR, 'entry.js');
 const TMP_OUTPUT_PATH = path.resolve(TMP_DIR, 'output.js');
-const TMP_JSON_PATH = path.resolve(TMP_DIR, 'stat.json');
 
 function execCmd(cmd, args) {
     return new Promise((resolve, reject) => {
@@ -42,19 +42,31 @@ const provideTmpDir = (fnExec) => {
 }
 
 const printForJson = (webpackStatJson) => Promise.resolve(printSizeTree(buildSizeTree(webpackStatJson)));
-const printForJsonStr = (webpackStatJsonStr) => Promise.resolve(printSizeTree(buildSizeTree(JSON.parse(webpackStatJsonStr))));
-const printForJsonFile = (statJsonFile) => printForJsonStr(fs.readFileSync(statJsonFile).toString());
+const printForJsonFile = (statJsonFile) => printForJson(fs.readJsonSync(statJsonFile).toString());
 const buildWebpackStatJson = (entryFile) => new Promise((resolve, reject) => {
-    webpack({
+    const cfg = {
         entry: path.resolve(entryFile),
         output: {
             path: TMP_DIR
+        },
+        module: {
+            loaders: [{
+                test: /\.json$/i,
+                loaders: [jsonLoader]
+            }]
         }
-    }, (err, stats) => {
+    };
+    if (argv['node']) {
+        cfg.target = 'node';
+    }
+    webpack(cfg, (err, stats) => {
         const statJson = stats.toJson({
             modules: true
         });
         err = err || statJson.errors[0];
+        if (!err && argv['output-json']) {
+            fs.outputJsonSync(argv['output-json'], statJson);
+        }
         err ? reject(err) : resolve(statJson);
     });
 });
@@ -79,6 +91,14 @@ const argv = yargs
         type: 'string',
         describe: 'Specify package name that need to be analyzed'
     })
+    .option('node', {
+        type: 'boolean',
+        describe: 'Whether to compile bundle running on node instead of browser (like "yargs"/"fs-extra" packages)'
+    })
+    // .option('output-json', {
+    //     type: 'string',
+    //     describe: 'Specify the path to write built webpack json into'
+    // })
     .argv;
 
 if (argv['stat-json']) {

@@ -29,11 +29,11 @@ class SizeTree {
     }
 }
 
-const RE_PACKAGE_NAME = /~\/([^\/]+)\//g;
-function extractPackageNames(moduleName) {
+const RE_PACKAGE_NAME_FROM_IDENTIFIER = /\Wnode_modules\/([^\/]+)(?=\/)/g;
+function extractPackageNames(moduleIdentifier) {
     let match = null;
     const packageNames = [];
-    while (match = RE_PACKAGE_NAME.exec(moduleName)) {
+    while (match = RE_PACKAGE_NAME_FROM_IDENTIFIER.exec(moduleIdentifier)) {
         packageNames.push(match[1]);
     }
     return packageNames;
@@ -51,7 +51,7 @@ export function buildSizeTree(webpackBundleStatJSON) {
         };
 
     webpackBundleStatJSON.modules.forEach(module => {
-        addPackageSize(extractPackageNames(module.name), module.size);
+        addPackageSize(extractPackageNames(module.identifier), module.size);
     });
 
     return rootSizeTree;
