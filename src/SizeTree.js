@@ -30,11 +30,18 @@ class SizeTree {
 }
 
 const RE_PACKAGE_NAME_FROM_IDENTIFIER = /\Wnode_modules\/([^\/]+)(?=\/)/g;
+const IGNORED_PACKAGES = [ 'uglify-loader', 'json-loader' ].reduce((map, name) => {
+    map[name] = true;
+    return map;
+}, {});
 function extractPackageNames(moduleIdentifier) {
     let match = null;
     const packageNames = [];
     while (match = RE_PACKAGE_NAME_FROM_IDENTIFIER.exec(moduleIdentifier)) {
-        packageNames.push(match[1]);
+        const name = match[1];
+        if (!IGNORED_PACKAGES[name]) {
+            packageNames.push(match[1]);
+        }
     }
     return packageNames;
 }

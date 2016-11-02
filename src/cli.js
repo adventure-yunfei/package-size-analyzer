@@ -2,11 +2,8 @@
 
 import fs from 'fs-extra';
 import path from 'path';
-import child_process from 'child_process';
 import yargs from 'yargs';
-import webpack from 'webpack';
 import {buildSizeTree, printSizeTree} from './SizeTree';
-const jsonLoader = require.resolve('json-loader');
 
 const SCRIPT_PATH = path.resolve(__dirname, __filename);
 const TMP_DIR = path.resolve(process.cwd(), '__tmp');
@@ -14,6 +11,7 @@ const TMP_ENTRY_PATH = path.resolve(TMP_DIR, 'entry.js');
 const TMP_OUTPUT_PATH = path.resolve(TMP_DIR, 'output.js');
 
 function execCmd(cmd, args) {
+    var child_process = require('child_process');
     return new Promise((resolve, reject) => {
         var cp = child_process.spawn(cmd, args, {
             stdio: 'inherit'
@@ -52,13 +50,24 @@ const buildWebpackStatJson = (entryFile) => new Promise((resolve, reject) => {
         module: {
             loaders: [{
                 test: /\.json$/i,
-                loaders: [jsonLoader]
+                loaders: [ require.resolve('json-loader') ]
             }]
         }
     };
     if (argv['node']) {
-        cfg.target = 'node';
+        cfg['target'] = 'node';
     }
+    if (argv['minify']) {
+        cfg['module']['loaders'].push({
+            test: /\.js$/,
+            loaders: [ require.resolve('uglify-loader') ]
+        });
+        cfg['uglify-loader'] = {
+            compress: true,
+            mangle: true
+        };
+    }
+    var webpack = require('webpack');
     webpack(cfg, (err, stats) => {
         const statJson = stats.toJson({
             modules: true
@@ -90,6 +99,11 @@ const argv = yargs
         alias: 'p',
         type: 'string',
         describe: 'Specify package name that need to be analyzed'
+    })
+    .option('minify', {
+        alias: 'm',
+        type: 'boolean',
+        describe: 'Whether to analyze minified size'
     })
     .option('node', {
         type: 'boolean',
