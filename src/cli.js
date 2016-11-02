@@ -10,16 +10,6 @@ const TMP_DIR = path.resolve(process.cwd(), '__tmp');
 const TMP_ENTRY_PATH = path.resolve(TMP_DIR, 'entry.js');
 const TMP_OUTPUT_PATH = path.resolve(TMP_DIR, 'output.js');
 
-function execCmd(cmd, args) {
-    var child_process = require('child_process');
-    return new Promise((resolve, reject) => {
-        var cp = child_process.spawn(cmd, args, {
-            stdio: 'inherit'
-        });
-        cp.on('close', (code) => code === 0 ? resolve() : reject());
-    });
-}
-
 function printIt(webpackStatsJsonStr) {
     printSizeTree(buildSizeTree(JSON.parse(webpackStatsJsonStr)));
 }
