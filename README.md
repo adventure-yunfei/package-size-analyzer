@@ -46,6 +46,12 @@ __ROOT__: 744.25 KB
 - Install globally by `npm install package-size-analyzer -g`
 - Run `package-size-analyzer` to see usage:
 
+### By package name:
+
+- `package-size-analyzer --package(-p) <npm package names (split by ","))>`
+
+Easy to use to directly check package size and its dependencies size.
+
 ### By JSON:
 
 - `package-size-analyzer --stat-json(-j) <webpack-stat-json-file>`
@@ -64,12 +70,6 @@ Used when you already have a webpack stat output json file, which may be produce
 require('./another-entry.js');
 require('react');
 ```
-
-### By package name:
-
-- `package-size-analyzer --package(-p) <npm package names (split by ","))>`
-
-Easy to use to directly check package size and its dependencies size.
 
 ### Also Support for Node-Side package: (like "yargs"/"fs-extra")
 
