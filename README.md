@@ -1,7 +1,7 @@
 # package-size-analyzer
 Size analyzer for npm package, webpack bundle ...
 
-A handy tools inspired by [webpack-bundle-size-analyzer](https://github.com/robertknight/webpack-bundle-size-analyzer).
+A handy tool inspired by [webpack-bundle-size-analyzer](https://github.com/robertknight/webpack-bundle-size-analyzer).
 
 While webpack itself provide [analyse tool](http://webpack.github.com/analyse), it's really hard to use.
 
