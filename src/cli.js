@@ -17,7 +17,9 @@ function printIt(webpackStatsJsonStr) {
 const provideTmpDir = (fnExec) => {
     fs.emptyDirSync(TMP_DIR);
     const onFinally = (err) => {
-        fs.removeSync(TMP_DIR);
+        if (!argv['keep-tmp']) {
+            fs.removeSync(TMP_DIR);
+        }
         if (err) {
             console.log(err);
         }
@@ -99,9 +101,14 @@ const argv = yargs
         type: 'boolean',
         describe: 'Whether to compile bundle running on node instead of browser (like "yargs"/"fs-extra" packages)'
     })
+    // Following options actually exist, but just invisible in user guide
     // .option('output-json', {
     //     type: 'string',
     //     describe: 'Specify the path to write built webpack json into'
+    // })
+    // .option('keep-tmp', {
+    //     type: 'boolean',
+    //     describe: 'Whether to keep tmp output'
     // })
     .argv;
 

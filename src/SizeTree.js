@@ -48,7 +48,7 @@ function extractPackageNames(moduleIdentifier) {
 }
 
 export function buildSizeTree(webpackBundleStatJSON) {
-    const rootSizeTree = new SizeTree('__ROOT__'),
+    const rootSizeTree = new SizeTree('__ALL__'),
         addPackageSize = (packageNames, size) => {
             let currentSizeTree = rootSizeTree;
             currentSizeTree.addSize(size);
