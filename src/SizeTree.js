@@ -30,7 +30,7 @@ class SizeTree {
     }
 }
 
-const RE_PACKAGE_NAME_FROM_IDENTIFIER = /\Wnode_modules\/([^\/]+)(?=\/)/g;
+const RE_PACKAGE_NAME_FROM_IDENTIFIER = /\Wnode_modules\W([^\/\\]+)(?=(\/|\\))/g;
 function extractPackageNames(moduleIdentifier) {
     const lastMarkIdx = moduleIdentifier.lastIndexOf('!');
     const modulePath = moduleIdentifier.slice(lastMarkIdx === -1 ? 0 : (lastMarkIdx + 1));

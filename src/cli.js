@@ -74,21 +74,17 @@ const buildWebpackStatJson = (entryFile) => new Promise((resolve, reject) => {
 });
 const resolveDependency = dependency => {
     if (/^(\.|\/|\w:)/.test(dependency)) {
+        // local file pattern
         return path.resolve(dependency);
     } else {
         try {
-            // first try loading npm package dependency
-            return require.resolve(dependency);
-        } catch (e) {
+            // first try loading local file dependency
             const localFile = path.resolve(dependency);
-            try {
-                // if fails, first fallback to load local file dependency
-                fs.accessSync(localFile);
-                return localFile;
-            } catch (e) {
-                // if local file still doesn't exist, just keep it as it is
-                return dependency;
-            }
+            fs.accessSync(localFile);
+            return localFile;
+        } catch (e) {
+            // if no corresponding local file, just keep it as it is
+            return dependency;
         }
     }
 };
