@@ -98,8 +98,8 @@ const createEntryForDependencies = (dependencies) => Promise.resolve(fs.writeFil
 )).then(() => TMP_ENTRY_PATH);
 
 const argv = yargs
-    .usage('$0 entry_1 entry_2 ... [options]')
-    .example('$0 react lodash/forEach ./src/foo.js', 'Entry could be package, local files, anything used by "require(...)"')
+    .usage('package-size-analyzer entry_1 entry_2 ... [options]')
+    .example('package-size-analyzer react lodash/forEach ./src/foo.js', 'Entry could be package, local files, anything used by "require(...)"')
     .option('stat-json', {
         alias: 'j',
         type: 'string',
