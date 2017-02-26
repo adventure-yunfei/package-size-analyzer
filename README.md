@@ -8,7 +8,7 @@ While webpack itself provide [analyse tool](http://webpack.github.com/analyse), 
 This package-size-analyzer tool produce something like following:
 
 ```
-__ROOT__: 744.25 KB
+__ALL__: 744.25 KB
   <self>: 14.9 KB
   fbjs: 32.32 KB
     <self>: 32.32 KB
@@ -45,39 +45,18 @@ __ROOT__: 744.25 KB
 
 - Install globally by `npm install package-size-analyzer -g`
 - Run `package-size-analyzer` to see usage:
+  - Usage: `package-size-analyzer entry_1 entry_2 ... [options]`
+  - `entry_1 entry_2 ...` could be package name (e.g. "react", "lodash/forEach"), local file (e.g. "./src/foo.js"), anything that used by `require(...)`
 
-### By package name:
+### Options
 
-- `package-size-analyzer --package(-p) <npm package names (split by ","))>`
-
-Easy to use to directly check package size and its dependencies size.
-
-### By JSON:
-
-- `package-size-analyzer --stat-json(-j) <webpack-stat-json-file>`
-
-Used when you already have a webpack stat output json file, which may be produced by `webpack --json` (see [webpack](http://webpack.github.io/docs/cli.html#json) doc)
-
-
-### By entry file:
-
-- `package-size-analyzer --entry(-e) <entry.js>`
-
-`<entry.js>` is just like the entry file in webpack config, which includes other dependencies, e.g.:
-
-```javascript
-// entry.js
-require('./another-entry.js');
-require('react');
-```
-
-### Also Support for Node-Side package: (like "yargs"/"fs-extra")
-
-- `package-size-analyzer --node ...`
+- `--minify (-m)` Analyze for minified size
+- `--node` Analyze for **node side** files (like "yargs", "fs-extra" which may require node.js specific modules like "path", "child_process", "fs")
+- `--stat-json (-j)` Specify pre-built webpack stat json file instead of entry files to analyze (stat json may be produced by `webpack --json`, see [webpack](http://webpack.github.io/docs/cli.html#json) doc)
 
 ### Example Usages:
 
-- `package-size-analyzer -p lodash`: check lodash size
-- `package-size-analyzer -p lodash,vue`: check both lodash and vue size
-- `package-size-analyzer -p lodash/assign,lodash/forEach`: check parts of lodash(@4) size
-- `package-size-analyzer -p fs-extra --node`: check **node-side** fs-extra package size
+- `package-size-analyzer lodash`: check lodash size
+- `package-size-analyzer lodash vue`: check both lodash and vue size
+- `package-size-analyzer lodash/assign lodash/forEach`: check parts of lodash(@4) size
+- `package-size-analyzer fs-extra --node`: check **node-side** fs-extra package size

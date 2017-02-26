@@ -2,6 +2,7 @@
 
 import fs from 'fs-extra';
 import path from 'path';
+import process from 'process';
 import yargs from 'yargs';
 import {buildSizeTree, printSizeTree} from './SizeTree';
 
@@ -71,12 +72,34 @@ const buildWebpackStatJson = (entryFile) => new Promise((resolve, reject) => {
         err ? reject(err) : resolve(statJson);
     });
 });
-const createEntryForPackages = (packageNames) => Promise.resolve(fs.writeFileSync(
+const resolveDependency = dependency => {
+    if (/^(\.|\/|\w:)/.test(dependency)) {
+        return path.resolve(dependency);
+    } else {
+        try {
+            // first try loading npm package dependency
+            return require.resolve(dependency);
+        } catch (e) {
+            const localFile = path.resolve(dependency);
+            try {
+                // if fails, first fallback to load local file dependency
+                fs.accessSync(localFile);
+                return localFile;
+            } catch (e) {
+                // if local file still doesn't exist, just keep it as it is
+                return dependency;
+            }
+        }
+    }
+};
+const createEntryForDependencies = (dependencies) => Promise.resolve(fs.writeFileSync(
     TMP_ENTRY_PATH,
-    packageNames.map(pkgName =>`require('${pkgName}');`).join('\n')
+    dependencies.map(dependency =>`require(${JSON.stringify(resolveDependency(dependency))});`).join('\n')
 )).then(() => TMP_ENTRY_PATH);
 
 const argv = yargs
+    .usage('$0 entry_1 entry_2 ... [options]')
+    .example('$0 react lodash/forEach ./src/foo.js', 'Entry could be package, local files, anything used by "require(...)"')
     .option('stat-json', {
         alias: 'j',
         type: 'string',
@@ -110,21 +133,25 @@ const argv = yargs
     //     type: 'boolean',
     //     describe: 'Whether to keep tmp output'
     // })
+    .check(argv => {
+        const dependencies = argv._;
+        if (dependencies.length && argv['stat-json']) {
+            return 'Cannot specify both packages/entries and webpack json file';
+        } else {
+            return true;
+        }
+    })
     .argv;
 
-if (argv['stat-json']) {
-    printForJsonFile(argv['stat-json']);
-} else if (argv['entry']) {
+const dependencies = argv._;
+if (dependencies.length) {
     provideTmpDir(() => {
-        return buildWebpackStatJson(argv['entry'])
-            .then(printForJson);
-    });
-} else if (argv['package']) {
-    provideTmpDir(() => {
-        return createEntryForPackages(argv['package'].split(','))
+        return createEntryForDependencies(dependencies)
             .then(buildWebpackStatJson)
             .then(printForJson);
     });
+} else if (argv['stat-json']) {
+    printForJsonFile(argv['stat-json']);
 } else {
     yargs.showHelp();
 }
