@@ -79,7 +79,7 @@ const buildCustomExtractPackageNamesFn = () => {
     } : null;
 };
 const printForJson = (webpackStatJson) => Promise.resolve(printSizeTree(buildSizeTree(webpackStatJson, customExtractPackageNamesFn)));
-const printForJsonFile = (statJsonFile) => printForJson(fs.readJsonSync(statJsonFile).toString());
+const printForJsonFile = (statJsonFile) => printForJson(fs.readJsonSync(statJsonFile));
 const buildWebpackStatJsonByConfig = (webpackConfig) => new Promise((resolve, reject) => {
     const webpack = require('webpack');
     webpack(webpackConfig, (err, stats) => {
