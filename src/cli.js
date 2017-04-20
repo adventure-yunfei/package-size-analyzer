@@ -13,19 +13,20 @@ let customExtractPackageNamesFn = null;
 
 const provideTmpDir = (fnExec) => {
     fs.emptyDirSync(TMP_DIR);
-    const onFinally = (err) => {
+    const onFinally = () => {
         if (!argv['keep-tmp']) {
             fs.removeSync(TMP_DIR);
         }
-        if (err) {
-            console.log(err);
-        }
     };
     try {
-        fnExec().then(() => onFinally(), onFinally);
+        fnExec().then(onFinally, onFinally);
     } catch (e) {
-        onFinally(e);
+        onFinally();
     }
+}
+
+const onMainException = (err) => {
+    console.error(err);
 }
 
 const buildCustomExtractPackageNamesFn = () => {
@@ -200,16 +201,19 @@ customExtractPackageNamesFn = buildCustomExtractPackageNamesFn();
 
 const dependencies = argv._;
 if (argv['stat-json']) {
-    printForJsonFile(argv['stat-json']);
+    printForJsonFile(argv['stat-json'])
+        .catch(onMainException);
 } else if (argv['webpack-config']) {
     const cfg = require(path.resolve(argv['webpack-config']));
     buildWebpackStatJsonByConfig(cfg)
-        .then(printForJson);
+        .then(printForJson)
+        .catch(onMainException);
 } else if (dependencies.length) {
     provideTmpDir(() => {
         return createEntryForDependencies(dependencies)
             .then(buildWebpackStatJsonByEntry)
-            .then(printForJson);
+            .then(printForJson)
+            .catch(onMainException);
     });
 } else {
     yargs.showHelp();
