@@ -44,10 +44,9 @@ It's capable to:
 
 - Analyze for almost any npm packages
 - Analyze for your own project built with webpack
-- Customize package group rules
-  - so you can:
-    - correct package for vendor files inside your own code base (e.g. group `"src/vendor/react.js"` to `"react"` package)
-    - separate size groups for your own code (e.g. group `"src/client/*.js"` to `"client"`)
+- Customize package group rulee, so you can:
+  - correct package for vendor files inside your own code base (e.g. group `"src/vendor/react.js"` to `"react"` package)
+  - separate size groups for your own code (e.g. group `"src/client/*.js"` to `"client"`)
 
 
 # Install & Usage
@@ -77,12 +76,14 @@ It's capable to:
 
 `package-map` options let you to customize which package a specific file belongs to (**by testing file absolute path**).
 
-- `--package-map-file <filepath>` Specify a custom package rules js file, which exports a map as: `{ <package_name>: <filepath_tester_or_re> }`, or an array as `[ [<package_name>, <filepath_tester_or_re>], ... ]`
+- `--package-map-file <filepath>` Specify a custom package rules js file, which exports:
+  - a map as: `{ <package_name>: <filepath_tester_or_re> }`
+  - or an array as `[ [<package_name>, <filepath_tester_or_re>], ... ]`
 - `--package-map <rule> <rule> ...` CLI inline rules. Each rule format: `<package_name>:<filepath_regexp>`. (It's parsed directly by `new RegExp(...)`. **Be careful** with backslash `\` escape in cli)
 
 **NOTE:**
   - You should take care of path differences between windows and linux (`"C:\a\b\c"` and `"/c/a/b/c"`)
-  - Only consider the first matched rule. Matching order: first try cli inline rules, then try rules in file.
+  - Only the first matched rule is picked. Matching order: first try cli inline rules, then try rules in file.
 
 Why need to customize package name that a file belongs to? Well, if you just use the tool to analyze npm packages, you don't need this. But if you want to analyze for your own project (with option `--webpack-config` or `--stat-json`), it's useful when you put some vendor codes somewhere else outsite `node_modules` (in which case their package names cannot be extracted correctly). And it's giving possibility to split size for your own codes.
 
