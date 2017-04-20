@@ -19,7 +19,10 @@ const provideTmpDir = (fnExec) => {
         }
     };
     try {
-        fnExec().then(onFinally, onFinally);
+        return fnExec().then(
+            (value) => { onFinally(); return value; },
+            (reason) => { onFinally(); return Promise.reject(reason); }
+        );
     } catch (e) {
         onFinally();
     }
@@ -27,6 +30,7 @@ const provideTmpDir = (fnExec) => {
 
 const onMainException = (err) => {
     console.error(err);
+    process.exit(1);
 }
 
 const buildCustomExtractPackageNamesFn = () => {
@@ -213,8 +217,7 @@ if (argv['stat-json']) {
         return createEntryForDependencies(dependencies)
             .then(buildWebpackStatJsonByEntry)
             .then(printForJson)
-            .catch(onMainException);
-    });
+    }).catch(onMainException);
 } else {
     yargs.showHelp();
 }

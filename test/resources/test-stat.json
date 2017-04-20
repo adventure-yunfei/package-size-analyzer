@@ -1,0 +1,360 @@
+{
+  "errors": [],
+  "warnings": [],
+  "version": "1.14.0",
+  "hash": "230ab9659131d8441ad8",
+  "time": 59,
+  "publicPath": "",
+  "assetsByChunkName": {
+    "main": "main.js"
+  },
+  "assets": [
+    {
+      "name": "main.js",
+      "size": 2157,
+      "chunks": [
+        0
+      ],
+      "chunkNames": [
+        "main"
+      ],
+      "emitted": true
+    }
+  ],
+  "chunks": [
+    {
+      "id": 0,
+      "rendered": true,
+      "initial": true,
+      "entry": true,
+      "extraAsync": false,
+      "size": 518,
+      "names": [
+        "main"
+      ],
+      "files": [
+        "main.js"
+      ],
+      "hash": "b85c8eb1c128d5c2c21a",
+      "parents": [],
+      "modules": [
+        {
+          "id": 0,
+          "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "name": "./js/test-entry.js",
+          "index": 0,
+          "index2": 4,
+          "size": 99,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": null,
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [],
+          "source": "require('slash');\r\nrequire('./client/main');\r\nrequire('./server/main');\r\nrequire('./vendor/react');"
+        },
+        {
+          "id": 1,
+          "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\node_modules\\slash\\index.js",
+          "name": "C:/Users/liangxiao/workshop/package-size-analyzer/~/slash/index.js",
+          "index": 1,
+          "index2": 0,
+          "size": 244,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 0,
+              "moduleIdentifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+              "module": "./js/test-entry.js",
+              "moduleName": "./js/test-entry.js",
+              "type": "cjs require",
+              "userRequest": "slash",
+              "loc": "1:0-16"
+            }
+          ],
+          "source": "'use strict';\nmodule.exports = function (str) {\n\tvar isExtendedLengthPath = /^\\\\\\\\\\?\\\\/.test(str);\n\tvar hasNonAscii = /[^\\x00-\\x80]+/.test(str);\n\n\tif (isExtendedLengthPath || hasNonAscii) {\n\t\treturn str;\n\t}\n\n\treturn str.replace(/\\\\/g, '/');\n};\n"
+        },
+        {
+          "id": 2,
+          "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\client\\main.js",
+          "name": "./js/client/main.js",
+          "index": 2,
+          "index2": 1,
+          "size": 43,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 0,
+              "moduleIdentifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+              "module": "./js/test-entry.js",
+              "moduleName": "./js/test-entry.js",
+              "type": "cjs require",
+              "userRequest": "./client/main",
+              "loc": "2:0-24"
+            }
+          ],
+          "source": "module.exports = 'This is client main.js.';"
+        },
+        {
+          "id": 3,
+          "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\server\\main.js",
+          "name": "./js/server/main.js",
+          "index": 3,
+          "index2": 2,
+          "size": 58,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 0,
+              "moduleIdentifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+              "module": "./js/test-entry.js",
+              "moduleName": "./js/test-entry.js",
+              "type": "cjs require",
+              "userRequest": "./server/main",
+              "loc": "3:0-24"
+            }
+          ],
+          "source": "module.exports = 'This is, of course, the server main.js';"
+        },
+        {
+          "id": 4,
+          "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\vendor\\react.js",
+          "name": "./js/vendor/react.js",
+          "index": 4,
+          "index2": 3,
+          "size": 74,
+          "cacheable": true,
+          "built": true,
+          "optional": false,
+          "prefetched": false,
+          "chunks": [
+            0
+          ],
+          "assets": [],
+          "issuer": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "failed": false,
+          "errors": 0,
+          "warnings": 0,
+          "reasons": [
+            {
+              "moduleId": 0,
+              "moduleIdentifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+              "module": "./js/test-entry.js",
+              "moduleName": "./js/test-entry.js",
+              "type": "cjs require",
+              "userRequest": "./vendor/react",
+              "loc": "4:0-25"
+            }
+          ],
+          "source": "module.exports = 'You want to see 600KB+ react source code here? No Way!';"
+        }
+      ],
+      "filteredModules": 0,
+      "origins": [
+        {
+          "moduleId": 0,
+          "module": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "moduleIdentifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "moduleName": "./js/test-entry.js",
+          "loc": "",
+          "name": "main",
+          "reasons": []
+        }
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "id": 0,
+      "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+      "name": "./js/test-entry.js",
+      "index": 0,
+      "index2": 4,
+      "size": 99,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": null,
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [],
+      "source": "require('slash');\r\nrequire('./client/main');\r\nrequire('./server/main');\r\nrequire('./vendor/react');"
+    },
+    {
+      "id": 1,
+      "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\node_modules\\slash\\index.js",
+      "name": "C:/Users/liangxiao/workshop/package-size-analyzer/~/slash/index.js",
+      "index": 1,
+      "index2": 0,
+      "size": 244,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "module": "./js/test-entry.js",
+          "moduleName": "./js/test-entry.js",
+          "type": "cjs require",
+          "userRequest": "slash",
+          "loc": "1:0-16"
+        }
+      ],
+      "source": "'use strict';\nmodule.exports = function (str) {\n\tvar isExtendedLengthPath = /^\\\\\\\\\\?\\\\/.test(str);\n\tvar hasNonAscii = /[^\\x00-\\x80]+/.test(str);\n\n\tif (isExtendedLengthPath || hasNonAscii) {\n\t\treturn str;\n\t}\n\n\treturn str.replace(/\\\\/g, '/');\n};\n"
+    },
+    {
+      "id": 2,
+      "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\client\\main.js",
+      "name": "./js/client/main.js",
+      "index": 2,
+      "index2": 1,
+      "size": 43,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "module": "./js/test-entry.js",
+          "moduleName": "./js/test-entry.js",
+          "type": "cjs require",
+          "userRequest": "./client/main",
+          "loc": "2:0-24"
+        }
+      ],
+      "source": "module.exports = 'This is client main.js.';"
+    },
+    {
+      "id": 3,
+      "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\server\\main.js",
+      "name": "./js/server/main.js",
+      "index": 3,
+      "index2": 2,
+      "size": 58,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "module": "./js/test-entry.js",
+          "moduleName": "./js/test-entry.js",
+          "type": "cjs require",
+          "userRequest": "./server/main",
+          "loc": "3:0-24"
+        }
+      ],
+      "source": "module.exports = 'This is, of course, the server main.js';"
+    },
+    {
+      "id": 4,
+      "identifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\vendor\\react.js",
+      "name": "./js/vendor/react.js",
+      "index": 4,
+      "index2": 3,
+      "size": 74,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\Users\\liangxiao\\workshop\\package-size-analyzer\\test\\resources\\js\\test-entry.js",
+          "module": "./js/test-entry.js",
+          "moduleName": "./js/test-entry.js",
+          "type": "cjs require",
+          "userRequest": "./vendor/react",
+          "loc": "4:0-25"
+        }
+      ],
+      "source": "module.exports = 'You want to see 600KB+ react source code here? No Way!';"
+    }
+  ],
+  "filteredModules": 0,
+  "children": []
+}

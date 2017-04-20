@@ -1,0 +1,1 @@
+module.exports = 'You want to see 600KB+ react source code here? No Way!';

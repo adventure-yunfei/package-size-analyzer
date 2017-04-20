@@ -1,0 +1,1 @@
+module.exports = 'This is, of course, the server main.js';
