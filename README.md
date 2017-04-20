@@ -65,14 +65,14 @@ It's capable to:
 - `package-size-analyzer --webpack-config webpack.config.js`: analyze for your own webpack-building project
 - `package-size-analyzer --stat-json webpack-stat.json`: analyze for your own prebuilt webpack stats json
 
-### Options
+# Options
 
 - `--minify (-m)` Analyze for minified size
 - `--node` Analyze for **node side** files (like "yargs", "fs-extra" which may require node.js specific modules like "path", "child_process", "fs")
 - `--webpack-config (-c) <filepath>` Directly specify webpack config to build and analyze
 - `--stat-json (-j) <filepath>` Directly specify pre-built webpack stat json file instead of entry files to analyze (stat json may be produced by `webpack --json`, see [webpack](http://webpack.github.io/docs/cli.html#json) doc)
 
-##### Advanced options: `package-map`
+### Advanced options: `package-map`
 
 `package-map` options let you to customize which package a specific file belongs to (**by testing file absolute path**).
 
