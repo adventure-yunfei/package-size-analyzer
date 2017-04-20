@@ -9,11 +9,7 @@ import {buildSizeTree, printSizeTree} from './SizeTree';
 const SCRIPT_PATH = path.resolve(__dirname, __filename);
 const TMP_DIR = path.resolve(process.cwd(), '__tmp');
 const TMP_ENTRY_PATH = path.resolve(TMP_DIR, 'entry.js');
-const TMP_OUTPUT_PATH = path.resolve(TMP_DIR, 'output.js');
-
-function printIt(webpackStatsJsonStr) {
-    printSizeTree(buildSizeTree(JSON.parse(webpackStatsJsonStr)));
-}
+let customExtractPackageNamesFn = null;
 
 const provideTmpDir = (fnExec) => {
     fs.emptyDirSync(TMP_DIR);
@@ -32,9 +28,71 @@ const provideTmpDir = (fnExec) => {
     }
 }
 
-const printForJson = (webpackStatJson) => Promise.resolve(printSizeTree(buildSizeTree(webpackStatJson)));
+const buildCustomExtractPackageNamesFn = () => {
+    const customPackageRules = []; // format: [ [<pkgName>, <testerFunc>], ... ]
+    const onValidRule = (pkgName, tester) => {
+        if (tester instanceof RegExp) {
+            const testerRE = tester;
+            tester = (moduleAbsPath) => testerRE.test(moduleAbsPath);
+        }
+        customPackageRules.push([ pkgName, tester ]);
+    }
+    const reToTester = (regexp) => (moduleAbsPath) => regexp.test(moduleAbsPath);
+    if (argv['package-map']) {
+        argv['package-map'].forEach(rule => {
+            const [pkgName, filePathRE] = rule.split(':');
+            if (pkgName && filePathRE) {
+                onValidRule(pkgName, new RegExp(filePathRE));
+            } else {
+                throw new Error(`package-map rule invalid: ${rule}`);
+            }
+        });
+    }
+    if (argv['package-map-file']) {
+        const filePkgMap = require(path.resolve(argv['package-map-file']));
+        const onEachRule = (pkgName, tester) => {
+            if (typeof tester === 'function' || tester instanceof RegExp) {
+                onValidRule(pkgName, tester);
+            } else {
+                throw new Error(`package-map-file (${argv['package-map-file']} output contains invalid field: ${pkgName})`);
+            }
+        };
+        if (filePkgMap instanceof Array) {
+            filePkgMap.forEach(([pkgName, tester]) => onEachRule(pkgName, tester));
+        } else {
+            for (let key in filePkgMap) {
+                onEachRule(key, filePkgMap[key]);
+            }
+        }
+    }
+    
+    return customPackageRules.length ? (moduleAbsPath) => {
+        let result = null;
+        customPackageRules.some(([pkgName, testerFn]) => {
+            if (testerFn(moduleAbsPath)) {
+                result = [pkgName];
+                return true;
+            }
+        });
+        return result;
+    } : null;
+};
+const printForJson = (webpackStatJson) => Promise.resolve(printSizeTree(buildSizeTree(webpackStatJson, customExtractPackageNamesFn)));
 const printForJsonFile = (statJsonFile) => printForJson(fs.readJsonSync(statJsonFile).toString());
-const buildWebpackStatJson = (entryFile) => new Promise((resolve, reject) => {
+const buildWebpackStatJsonByConfig = (webpackConfig) => new Promise((resolve, reject) => {
+    const webpack = require('webpack');
+    webpack(webpackConfig, (err, stats) => {
+        const statJson = stats.toJson({
+            modules: true
+        });
+        err = err || statJson.errors[0];
+        if (!err && argv['output-json']) {
+            fs.outputJsonSync(argv['output-json'], statJson);
+        }
+        err ? reject(err) : resolve(statJson);
+    });
+});
+const buildWebpackStatJsonByEntry = (entryFile) => {
     const cfg = {
         entry: path.resolve(entryFile),
         output: {
@@ -60,18 +118,8 @@ const buildWebpackStatJson = (entryFile) => new Promise((resolve, reject) => {
             mangle: true
         };
     }
-    var webpack = require('webpack');
-    webpack(cfg, (err, stats) => {
-        const statJson = stats.toJson({
-            modules: true
-        });
-        err = err || statJson.errors[0];
-        if (!err && argv['output-json']) {
-            fs.outputJsonSync(argv['output-json'], statJson);
-        }
-        err ? reject(err) : resolve(statJson);
-    });
-});
+    return buildWebpackStatJsonByConfig(cfg);
+};
 const resolveDependency = dependency => {
     if (/^(\.|\/|\w:)/.test(dependency)) {
         // local file pattern
@@ -94,23 +142,8 @@ const createEntryForDependencies = (dependencies) => Promise.resolve(fs.writeFil
 )).then(() => TMP_ENTRY_PATH);
 
 const argv = yargs
-    .usage('package-size-analyzer entry_1 entry_2 ... [options]')
-    .example('package-size-analyzer react lodash/forEach ./src/foo.js', 'Entry could be package, local files, anything used by "require(...)"')
-    .option('stat-json', {
-        alias: 'j',
-        type: 'string',
-        describe: 'Specify webpack stat json file'
-    })
-    .option('entry', {
-        alias: 'e',
-        type: 'string',
-        describe: 'Specify entry file which imports other packages'
-    })
-    .option('package', {
-        alias: 'p',
-        type: 'string',
-        describe: 'Specify package name that need to be analyzed'
-    })
+    .usage('[cli] entry_1 entry_2 ... [options]')
+    .example('[cli] react lodash/forEach ./src/foo.js', 'Entry could be package, local files, anything used by "require(...)".')
     .option('minify', {
         alias: 'm',
         type: 'boolean',
@@ -120,6 +153,30 @@ const argv = yargs
         type: 'boolean',
         describe: 'Whether to compile bundle running on node instead of browser (like "yargs"/"fs-extra" packages)'
     })
+    .option('stat-json', {
+        alias: 'j',
+        type: 'string',
+        describe: 'Specify webpack stat json file to analyze'
+    })
+    .option('webpack-config', {
+        alias: 'c',
+        type: 'string',
+        describe: 'Specify webpack config file to analyze'
+    })
+
+    // Advanced package-map options
+    .option('package-map', {
+        type: 'array',
+        describe: [
+            'Specify custom rules mapping files to package.',
+            'Rules format:  <package_name>:<filepath_regexp> <package_name>:<filepath_regexp> ...',
+        ].join('\n')
+    })
+    .option('package-map-file', {
+        type: 'string',
+        describe: 'Specify a custom rules js file, which exports a map as: {<pkgName>: <pathRE>}, or an array as [ [<pkgName>, <pathRE>] ]'
+    })
+
     // Following options actually exist, but just invisible in user guide
     // .option('output-json', {
     //     type: 'string',
@@ -139,15 +196,21 @@ const argv = yargs
     })
     .argv;
 
+customExtractPackageNamesFn = buildCustomExtractPackageNamesFn();
+
 const dependencies = argv._;
-if (dependencies.length) {
+if (argv['stat-json']) {
+    printForJsonFile(argv['stat-json']);
+} else if (argv['webpack-config']) {
+    const cfg = require(path.resolve(argv['webpack-config']));
+    buildWebpackStatJsonByConfig(cfg)
+        .then(printForJson);
+} else if (dependencies.length) {
     provideTmpDir(() => {
         return createEntryForDependencies(dependencies)
-            .then(buildWebpackStatJson)
+            .then(buildWebpackStatJsonByEntry)
             .then(printForJson);
     });
-} else if (argv['stat-json']) {
-    printForJsonFile(argv['stat-json']);
 } else {
     yargs.showHelp();
 }

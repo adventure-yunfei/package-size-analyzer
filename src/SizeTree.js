@@ -30,20 +30,24 @@ class SizeTree {
     }
 }
 
-const RE_PACKAGE_NAME_FROM_IDENTIFIER = /\Wnode_modules\W([^\/\\]+)(?=(\/|\\))/g;
-function extractPackageNames(moduleIdentifier) {
+function extractModuleAbsPath(moduleIdentifier) {
+    // module "identifier"" format: loader-a!loader-b!...!loader-n!/abs/path/to/file
     const lastMarkIdx = moduleIdentifier.lastIndexOf('!');
-    const modulePath = moduleIdentifier.slice(lastMarkIdx === -1 ? 0 : (lastMarkIdx + 1));
+    return moduleIdentifier.slice(lastMarkIdx === -1 ? 0 : (lastMarkIdx + 1));
+}
+
+const RE_PACKAGE_NAME_FROM_IDENTIFIER = /\Wnode_modules\W([^\/\\]+)(?=(\/|\\))/g;
+function extractPackageNames(moduleAbsolutePath) {
     let match = null;
     const packageNames = [];
-    while (match = RE_PACKAGE_NAME_FROM_IDENTIFIER.exec(modulePath)) {
+    while (match = RE_PACKAGE_NAME_FROM_IDENTIFIER.exec(moduleAbsolutePath)) {
         const name = match[1];
         packageNames.push(match[1]);
     }
     return packageNames;
 }
 
-export function buildSizeTree(webpackBundleStatJSON) {
+export function buildSizeTree(webpackBundleStatJSON, customExtractPackageNames = null) {
     const rootSizeTree = new SizeTree('__ALL__'),
         addPackageSize = (packageNames, size) => {
             let currentSizeTree = rootSizeTree;
@@ -55,7 +59,9 @@ export function buildSizeTree(webpackBundleStatJSON) {
         };
 
     webpackBundleStatJSON.modules.forEach(module => {
-        addPackageSize(extractPackageNames(module.identifier), module.size);
+        const moduleAbsPath = extractModuleAbsPath(module.identifier);
+        let packageNames = customExtractPackageNames && customExtractPackageNames(moduleAbsPath) || extractPackageNames(moduleAbsPath);
+        addPackageSize(packageNames, module.size);
     });
 
     return rootSizeTree;
