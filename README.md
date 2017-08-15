@@ -87,7 +87,7 @@ It's capable to:
 
 Why need to customize package name that a file belongs to? Well, if you just use the tool to analyze npm packages, you don't need this. But if you want to analyze for your own project (with option `--webpack-config` or `--stat-json`), it's useful when you put some vendor codes somewhere else outsite `node_modules` (in which case their package names cannot be extracted correctly). And it's giving possibility to split size for your own codes.
 
-Example Usages: Suppose we have following file structure:
+**Example Usages:** Suppose we have following file structure:
 
 ```
 --root
